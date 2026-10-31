@@ -1,0 +1,28 @@
+{
+	"$schema": "https://orgsdk.ai/schemas/plugin-manifest.v1.json",
+	"name": "zendesk",
+	"version": "0.1.1",
+	"description": "Read-only Zendesk evidence for ecommerce late-order and return reviews.",
+	"entry": "index.ts",
+	"auth": {
+		"type": "token",
+		"provider": "zendesk",
+		"label": "Zendesk OAuth access token",
+		"hint": "Attach a zendesk credential containing secret_accessToken. Multi-customer distributions require an approved Zendesk global OAuth client. The current OrgSDK host accepts this as a manually managed token; automatic Zendesk OAuth connection is not available."
+	},
+	"marketplace": {
+		"displayName": "Zendesk",
+		"category": "Business",
+		"tagline": "Read evidence for late orders and return recommendations.",
+		"tags": ["ecommerce", "support", "readonly", "exceptions"],
+		"useCases": [
+			"Correlate order, shipment and support references",
+			"Prepare evidence for a human-reviewed recommendation"
+		],
+		"permissionsSummary": "Read operations only. No purchases, refunds, messages, updates or credential mutation. Account credentials may independently have broader rights.",
+		"links": {
+			"homepage": "https://orgsdk.ai",
+			"docs": "https://developer.zendesk.com/api-reference/ticketing/introduction/"
+		}
+	}
+}
