@@ -1,48 +1,34 @@
-# Current execution contract
-
-Configure `{ "subdomain": "your-account" }` and attach a `zendesk` credential with `secret_accessToken`. Requests use OAuth bearer authentication, never email/API-token Basic auth. Use an approved global OAuth client for multi-customer distribution; an internal OAuth client is for internal use. The current host stores this manually managed token and does not perform Zendesk OAuth onboarding or refresh. Provider approval is separate from source release.
-
-Native OAuth providers receive only `{source: "byo", secret_accessToken}`. The host owns refresh. The first-party relay is retired.
-
-## Historical source reference
-
-The following describes the former author-source host; current npm and native credential behaviour above takes precedence.
-
 # OrgSDK Zendesk evidence plugin
 
-Private **internal-account adapter** for reading Zendesk ticket and comment
-evidence for order exceptions and return recommendations. Uses Ticketing API v2.
-No ticket creation, updates, sends, attachment downloads or refunds.
+Apache-2.0 read-only plugin for ticket and comment evidence using Ticketing API v2.
+No ticket creation, updates, messages, attachment downloads or refunds.
 
-## Authentication and distribution boundary
+## Install in OrgSDK
 
-Zendesk's current official authentication docs label API tokens **deprecated**,
-recommend OAuth migration, and require **global OAuth** for integrations made
-available to multiple Zendesk customers. Internal integrations are exempt from
-that global-OAuth requirement. This requested API-token implementation is for
-an operator's own internal Zendesk integration only. It is not a ready-to-publish
-multi-customer Zendesk app. Metadata here is descriptive; it does not authorize
-catalog publication or satisfy Zendesk approval. A future distributed release
-must implement the required global OAuth flow and review its lifecycle separately.
+Enable the pinned Zendesk release from your project's Plugins page. The default
+catalogue is https://orgsdk.ai/plugins/releases.json. The executor verifies the
+bundle SHA256. Installing npm files alone does not register a project plugin.
+See LICENSE, NOTICE and TRADEMARKS.md for licensing and attribution.
 
-1. Confirm API-token authentication remains enabled/supported for your account.
-   In Zendesk Admin Center > Apps and integrations > APIs > Zendesk API, create
-   a token if available. Use a verified, appropriately limited agent account.
-2. Configure `{ "subdomain": "your-account" }` in OrgSDK. The subdomain is one
-   lowercase DNS label; schemes, suffixes, paths, ports and custom hosts fail.
-   Optional `timeoutMs` controls the bounded request timeout.
-3. Attach provider `zendesk` secrets `secret_email` and `secret_apiToken`. Uses
-   supported Basic auth encoding of `<email>/token:<api_token>`, never a password.
-   Email remains a secret credential field. No environment fallback is provided.
-4. Call `testConnection({})`; it reads `/api/v2/users/me.json` and returns the
-   agent ID, email, role and active state for operator review.
+## Credentials and configuration
 
-Zendesk API tokens are password-like and can impersonate users, including admins;
-they are not granular read-only scoped credentials. The effective user's role,
-account restrictions and endpoint permissions limit visible data. The fixed
-configured account host and injected credential determine tenant access; no
-caller-supplied URL or account override exists. No plugin refresh, credential
-storage mutation, OAuth registration or app authorization is provided.
+1. Obtain an OAuth access token through your own Zendesk OAuth application. Use
+   an approved global OAuth client when serving multiple Zendesk customers;
+   internal clients are for internal use. Publishing this package does not grant
+   provider approval or implement a multi-customer consent service.
+2. Store provider `zendesk` with `secret_accessToken` in OrgSDK and attach that
+   credential to the plugin. Requests use `Authorization: Bearer`, never
+   email/API-token authentication. On OrgSDK 0.1.0, obtain and renew tokens
+   externally; native Zendesk onboarding and refresh are not implemented.
+3. Configure `{ "subdomain": "your-account" }`. This must be one lowercase DNS
+   label, without scheme, suffix, path or port. Optional `timeoutMs` bounds
+   requests. Secrets belong in credentials, not configuration.
+4. Call `zendesk.testConnection({})` to inspect the authenticated user. Role and
+   endpoint permissions still determine which tickets and comments are visible.
+
+The fixed account host and attached credential determine access. No arbitrary
+URL, account override, token exchange, credential mutation or automatic retry
+is exposed. Provider error bodies and credentials are omitted from errors.
 
 ## Named functions
 
@@ -85,4 +71,4 @@ No attachment is downloaded. An empty plain body may represent a non-text commen
 - [Cursor pagination](https://developer.zendesk.com/documentation/api-basics/pagination/paginating-through-lists-using-cursor-pagination/)
 - [Ticket comments and private notes](https://developer.zendesk.com/api-reference/ticketing/tickets/ticket_comments/)
 
-Private read-only integration. See the repository README for verification and artifact instructions.
+Tests use synthetic provider fixtures. Live account permissions and app approval must be verified with the operator’s selected account.

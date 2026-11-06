@@ -1,7 +1,7 @@
 {
 	"$schema": "https://orgsdk.ai/schemas/plugin-manifest.v1.json",
 	"name": "zendesk",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "Read-only Zendesk evidence for ecommerce late-order and return reviews.",
 	"entry": "index.ts",
 	"auth": {
